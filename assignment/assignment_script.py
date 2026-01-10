@@ -31,8 +31,14 @@ if attacks["Year"].isna().any(): # Converts Year variable to integer
 else:
     attacks["Year"] = attacks["Year"].astype(int)
 print(attacks.head()) # Prints first rows of the dataset
+print(attacks["Country"].unique()) # To check visually the list of unique values in "Country" variable
+print(attacks["Year"].dtype)
 
 # %% Function to select a year
+
+print(attacks["Year"].min()) #Printing the minimum and maximum year value to check the offered values (only for testing)
+print(attacks["Year"].max())
+
 def select_year(df, year_col): # Script to define the function
     min_year = int(df[year_col].min()) # Defining minimum year 
     max_year = int(df[year_col].max()) # Defining maximum year
@@ -44,21 +50,21 @@ def select_year(df, year_col): # Script to define the function
             break  # If condition is fulfilled, the loop stops
         else: # If not fulfilled, it asks for the year again:
             print(f"Please enter a year between {min_year} and {max_year}.")
-    
-    print(f"Filtering data for {year}.") # One the year is correctly selected, it prints the message about filtering the data
+        
     filtered_df = df[(df[year_col] == year)].reset_index(drop=True) # It filters the data based on the selected year and saves in new dataframe
-    
-    print("The dataset is ready. Preparing visualization") # Informs the user about the readiness of the dataset and preparation of output.
     return filtered_df # the function returns filtered dataset
 
 attacks_filtered = select_year(attacks, "Year") # Calling the function to actually filter the dataset
-# print (attacks_filtered.head) 
+print (attacks_filtered.head) 
+print(attacks_filtered["Year"].unique()) # Prints the list of unique values to test if the year was properly selected
+# attacks_filtered.to_excel("test.xlsx", index=False) # Saves the subset as excel to test the number of incidents.
 
 # %% Calculating the number of incidents per country in the selected year and plotting ten countries with the highest number of incidents.
 def plot_incidents(df, country_col, year_col, top_n): # Function definition
     
     country_counts = df[country_col].value_counts() # Calculating the number of incidents per country. .value_counts() counts how many times each unique value appears.
     top_countries = country_counts.head(top_n) # Selects countries with highest number of incidents. Sorts automatically.
+    print(top_countries) # Printing list of top 10 countries by number of incidents in selected year (for testing)
 
     year = int(df[year_col].iloc[0]) # Since only one year was selected, this extracts value from the first row of "Year" variable 
     file_path = SCRIPT_DIR / f"top_countries_plot_{year}.png" # Defines where the plot will be saved and under which name
